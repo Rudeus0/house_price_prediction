@@ -4,6 +4,7 @@ from sklearn.datasets import fetch_california_housing
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler 
 from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestRegressor
 
 def load_data() -> pd.DataFrame:
     data_frame = fetch_california_housing(data_farme=(True))
@@ -35,3 +36,11 @@ def split_and_scale(housing_df: pd.DataFrame, housing_dfc: pd.DataFrame) -> tupl
 
 
 
+def train_model(X_train_scaled: np.ndarray, y_train: pd.Series ) -> tuple:
+    model_lr = LinearRegression()
+    model_lr.fit(X_train_scaled, y_train)
+
+    model_rf = RandomForestRegressor(n_estimators=100, random_state=42)
+    model_rf.fit(X_train_scaled, y_train)
+
+    return model_lr, model_rf
