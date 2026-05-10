@@ -3,6 +3,7 @@ import numpy as np
 from sklearn.datasets import fetch_california_housing
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler 
+from sklearn.linear_model import LinearRegression
 
 def load_data() -> pd.DataFrame:
     data_frame = fetch_california_housing(data_farme=(True))
@@ -18,6 +19,19 @@ def transfrom_features(housing_df: pd.DataFrame) -> pd.DataFrame:
     housing_dfc["AveOccup"] = np.log1p(housing_dfc["AveOccup"])
     housing_dfc["MedInc"] = np.log1p(housing_dfc["MedInc"])
     return housing_dfc
+
+def split_and_scale(housing_df: pd.DataFrame, housing_dfc: pd.DataFrame) -> tuple:
+    X = housing_dfc.drop(["MedHouseVal"], axis=1) 
+    y = housing_df["MedHouseVal"]
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42
+        )
+
+    scaler = StandardScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
+    
+    return X_train_scaled, X_test_scaled, y_train, y_test, scaler
 
 
 
