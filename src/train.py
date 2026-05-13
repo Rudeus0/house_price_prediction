@@ -7,12 +7,12 @@ from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor
 
 def load_data() -> pd.DataFrame:
-    data_frame = fetch_california_housing(data_farme=(True))
+    data_frame = fetch_california_housing(as_frame=(True))
     housing_df = data_frame.frame
     return housing_df
 
 
-def transfrom_features(housing_df: pd.DataFrame) -> pd.DataFrame:
+def transform_features(housing_df: pd.DataFrame) -> pd.DataFrame:
     housing_dfc = housing_df.copy()
     housing_dfc["AveRooms"] = np.log1p(housing_dfc["AveRooms"])
     housing_dfc["AveBedrms"] = np.log1p(housing_dfc["AveBedrms"])
@@ -24,6 +24,7 @@ def transfrom_features(housing_df: pd.DataFrame) -> pd.DataFrame:
 def split_and_scale(housing_df: pd.DataFrame, housing_dfc: pd.DataFrame) -> tuple:
     X = housing_dfc.drop(["MedHouseVal"], axis=1) 
     y = housing_df["MedHouseVal"]
+    
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42
         )
@@ -44,3 +45,4 @@ def train_model(X_train_scaled: np.ndarray, y_train: pd.Series ) -> tuple:
     model_rf.fit(X_train_scaled, y_train)
 
     return model_lr, model_rf
+
