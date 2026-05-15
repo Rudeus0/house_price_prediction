@@ -44,3 +44,36 @@ evaluate_models()     → RMSE + R² for both models
 ```
 
 ---
+
+
+## Dataset
+
+- **Source:** `sklearn.datasets.fetch_california_housing`
+- **Size:** 20,640 rows × 8 features
+- **Target:** `MedHouseVal` (Median house value in $100,000s)
+
+| Feature | Description |
+| :--- | :--- |
+| **MedInc** | Median income in block group |
+| **HouseAge** | Median house age |
+| **AveRooms** | Average rooms per household |
+| **AveBedrms** | Average bedrooms per household |
+| **Population** | Block group population |
+| **AveOccup** | Average occupants per household |
+| **Latitude** | Block group latitude |
+| **Longitude** | Block group longitude |
+
+---
+
+## Feature Engineering & Transformations
+
+To improve model stability—especially for Linear Regression—element-wise log transformations ($log(x + 1)$) were applied to handle highly skewed features and compress extreme outliers (e.g., maximum values in `Population` and `AveOccup`).
+
+### Code Implementation
+
+```python
+# Apply log1p transform to skewed features
+skewed_features = ["AveRooms", "AveBedrms", "Population", "AveOccup", "MedInc"]
+
+for col in skewed_features:
+    housing_dfc[col] = np.log1p(housing_dfc[col])
