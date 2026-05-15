@@ -1,5 +1,5 @@
 # virtual environment
-.housePP_venv/
+.house_venv/
 __pycache__/
 *.pyc
 
