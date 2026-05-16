@@ -69,11 +69,38 @@ evaluate_models()     → RMSE + R² for both models
 
 To improve model stability—especially for Linear Regression—element-wise log transformations ($log(x + 1)$) were applied to handle highly skewed features and compress extreme outliers (e.g., maximum values in `Population` and `AveOccup`).
 
-### Code Implementation
+Log1p transforms applied to 5 skewed features:
 
 ```python
-# Apply log1p transform to skewed features
-skewed_features = ["AveRooms", "AveBedrms", "Population", "AveOccup", "MedInc"]
+housing_dfc["AveRooms"]    = np.log1p(housing_dfc["AveRooms"])
+housing_dfc["AveBedrms"]   = np.log1p(housing_dfc["AveBedrms"])
+housing_dfc["Population"]  = np.log1p(housing_dfc["Population"])
+housing_dfc["AveOccup"]    = np.log1p(housing_dfc["AveOccup"])
+housing_dfc["MedInc"]      = np.log1p(housing_dfc["MedInc"])
+```
 
-for col in skewed_features:
-    housing_dfc[col] = np.log1p(housing_dfc[col])
+Target `MedHouseVal` kept in original scale — transforming the target breaks R² evaluation.
+
+---
+
+## Key Insight — Feature Importance
+
+`MedInc` (median income) is the strongest predictor of house price by a large margin. Location (Latitude/Longitude) is second. This confirms the real estate principle: income level of a neighbourhood drives property values more than physical house characteristics.
+
+---
+
+## How to Run
+
+```bash
+git clone https://github.com/Rudeus0/house_price_prediction.git
+cd house_price_prediction
+
+python -m venv .venv
+.venv\Scripts\activate  # Windows
+
+pip install -r requirements.txt
+python main.py
+```
+
+---
+
