@@ -177,3 +177,17 @@ rmse = np.sqrt(mean_squared_error(y_test, y_pred))
 
 ---
 
+## Error Analysis
+
+**Where the model struggles:**
+- Houses capped at $500,001 (5.00001 in units) — dataset clips high-value properties, model cannot predict above this ceiling
+- Coastal California properties are harder to predict — location alone doesn't capture proximity to coast
+- `AveOccup` outliers (max 1243 occupants) — even after log transform, extreme values add noise
+- Linear Regression underfits — house prices are non-linear, single line cannot capture complex interactions between income, location, and age
+
+**Why Random Forest wins:**
+- Captures non-linear relationships between features
+- Handles outliers better through tree splits
+- Naturally performs feature selection through importance scores
+
+---
