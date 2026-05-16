@@ -104,3 +104,76 @@ python main.py
 
 ---
 
+## Bugs Encountered and Fixed
+
+### Bug 1 — Wrong sklearn parameter
+```python
+# WRONG
+fetch_california_housing(data_farme=(True))
+
+# CORRECT
+fetch_california_housing(as_frame=True)
+```
+Typo in parameter name caused silent failure — dataset loaded without frame structure.
+
+---
+
+### Bug 2 — Log transform applied to target variable
+```python
+# WRONG — MedHouseVal got transformed
+housing_dfc = housing_df.copy()
+y = housing_dfc['MedHouseVal']   # log-transformed target
+
+# CORRECT — target stays in original scale
+y = housing_df['MedHouseVal']    # original housing_df, not housing_dfc
+```
+This caused R² of -0.52 — model appeared completely broken. Root cause: predictions were in log scale but evaluation expected original scale. Fix: always take `y` from the untransformed dataframe.
+
+---
+
+### Bug 3 — Train/test split before log transforms
+```python
+# WRONG — split on original data, transforms applied after
+X, y = housing_df.drop(...), housing_df['MedHouseVal']
+X_train, X_test, ... = train_test_split(X, y)
+housing_dfc["MedInc"] = np.log1p(...)  # too late
+
+# CORRECT — transform first, split after
+housing_dfc["MedInc"] = np.log1p(...)  # transform first
+X, y = housing_dfc.drop(...), housing_df['MedHouseVal']
+X_train, X_test, ... = train_test_split(X, y)  # split after
+```
+Caused model to train on unlogged features but test on different distribution.
+
+---
+
+### Bug 4 — `scaler.fit()` instead of `scaler.transform()` on test set
+```python
+# WRONG — fits a new scaler on test data (data leakage)
+X_test_scaled = scaler.fit(X_test)
+
+# CORRECT — only transform, never fit on test data
+X_test_scaled = scaler.transform(X_test)
+```
+Fitting on test data leaks information from the future into the model. Always `fit_transform` on train, `transform` only on test.
+
+---
+
+### Bug 5 — All code in one file
+Initially `train.py`, `evaluate.py` and `main.py` logic were all in one file. Caused circular import errors and `exited with code=0` with no output.
+
+Fix: separated into three files with single responsibilities.
+
+---
+
+### Bug 6 — `np.sqrt()` missing from RMSE
+```python
+# WRONG — returns MSE not RMSE
+rmse = mean_squared_error(y_test, y_pred)
+
+# CORRECT
+rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+```
+
+---
+
