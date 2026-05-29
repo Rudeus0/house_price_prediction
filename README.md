@@ -191,3 +191,23 @@ rmse = np.sqrt(mean_squared_error(y_test, y_pred))
 - Naturally performs feature selection through importance scores
 
 ---
+
+## Key Learnings
+
+- Always transform features before splitting — not after
+- Never transform the target variable when evaluating in original units
+- `fit_transform` on train, `transform` only on test — fitting on test = data leakage
+- Negative R² means model is worse than predicting the mean — always a sign of a data pipeline bug
+- Log1p transforms on skewed features improved R² from 0.57 to 0.61 for Linear Regression
+- Random Forest (R² 0.80) significantly outperforms Linear Regression (R² 0.61) on this non-linear dataset
+- Separation of concerns: load → transform → split → train → evaluate as separate functions makes debugging easier
+
+---
+
+## Tech Stack
+
+- Python 3.12
+- scikit-learn — models, metrics, preprocessing
+- pandas — data manipulation
+- NumPy — numerical operations
+- Matplotlib + Seaborn — visualisation
