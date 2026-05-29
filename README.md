@@ -177,6 +177,36 @@ rmse = np.sqrt(mean_squared_error(y_test, y_pred))
 
 ---
 
+## Questions I Worked Through
+
+**Q: Why does log transform improve the model?**
+Features like Population and AveOccup have extreme outliers (max 35,682 and 1,243).
+These large values dominate the model's learning. Log transform compresses the range
+so the model treats all values more fairly.
+
+**Q: Why take y from housing_df not housing_dfc?**
+housing_dfc has log-transformed features. If MedHouseVal also gets transformed,
+predictions come out in log scale but RMSE compares against original scale.
+Result: negative R² that looks like the model is broken — but it's just a unit mismatch.
+
+**Q: Why fit_transform on train but only transform on test?**
+fit_transform learns the mean and std from training data and scales it.
+If you fit on test data too, the scaler learns from future data — called data leakage.
+The test set must be scaled using the same parameters learned from training only.
+
+**Q: Why does Random Forest beat Linear Regression here?**
+House prices are non-linear. A higher income neighbourhood doesn't always mean
+proportionally higher prices — location, age, and density interact in complex ways.
+Linear Regression draws one straight line through all that complexity.
+Random Forest builds 100 decision trees that capture non-linear patterns.
+
+**Q: What does R² actually mean?**
+R² = 0.80 means the model explains 80% of the variation in house prices.
+The remaining 20% is noise, missing features, or patterns the model can't capture.
+R² below 0 means the model is worse than just predicting the average every time.
+
+---
+
 ## Error Analysis
 
 **Where the model struggles:**
